@@ -65,11 +65,9 @@
     const nameInput = document.getElementById('name');
     const statusEl = document.getElementById('status');
 
-    // yyyy-mm-dd (do navegador; suficiente para uso em sala)
     function todayKey(){
       const d = new Date();
-      const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), da=String(d.getDate()).padStart(2,'0');
-      return `${y}-${m}-${da}`;
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
 
     function getOrCreateDeviceId(){
@@ -92,28 +90,19 @@
       return !snap.empty;
     }
 
-    // bloqueia se já tem envio hoje
-    (async ()=>{
-      if (await existsToday()){
-        form.style.display='none';
-        statusEl.textContent = 'Presença já enviada neste dispositivo hoje.';
+    async function registrarPresenca(name){
+      if (!name) { 
+        statusEl.textContent = 'Nome inválido.'; 
+        return; 
       }
-    })();
 
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const name = nameInput.value.trim();
-      if(!name){ statusEl.textContent = 'Digite um nome válido.'; return; }
-
-      statusEl.textContent = 'Enviando...';
-
-      if (await existsToday()){
+      if (await existsToday()) {
         form.style.display='none';
         statusEl.textContent = 'Presença já enviada neste dispositivo hoje.';
         return;
       }
 
-      try{
+      try {
         await addDoc(collection(db,'submissions'), {
           name,
           deviceId,
@@ -121,24 +110,37 @@
           createdAt: serverTimestamp(),
           createdBy: 'user'
         });
+        localStorage.setItem("nomeAluno", name); // salva para QR Code
         form.style.display='none';
         statusEl.textContent = 'Presença confirmada — obrigado!';
-      }catch(err){
+      } catch(err) {
         console.error(err);
         statusEl.textContent = 'Erro ao enviar. Tente novamente.';
       }
+    }
+
+    // Bloqueia se já enviou hoje
+    (async ()=>{
+      if (await existsToday()){
+        form.style.display='none';
+        statusEl.textContent = 'Presença já enviada neste dispositivo hoje.';
+      }
+    })();
+
+    // Envio manual
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      registrarPresenca(nameInput.value.trim());
     });
 
-    // Detecta se tem parâmetro "auto=1"
-const params = new URLSearchParams(window.location.search);
-if (params.get("auto") === "1") {
-    // Se já tem o nome salvo no localStorage
-    const nomeSalvo = localStorage.getItem("nomeAluno");
-    if (nomeSalvo) {
-        registrarPresenca(nomeSalvo); // Chama a função como se fosse clique do aluno
+    // QR Code auto
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("auto") === "1") {
+      const nomeSalvo = localStorage.getItem("nomeAluno");
+      if (nomeSalvo) {
+        registrarPresenca(nomeSalvo);
+      }
     }
-}
   </script>
 </body>
 </html>
-
