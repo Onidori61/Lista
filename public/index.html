@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chamada — Aluno</title>
+  <title>#Fila — Aluno</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -29,35 +29,44 @@
 <body class="min-h-screen bg-futuro">
   <div class="max-w-xl mx-auto p-6">
     <header class="mb-6">
-      <h1 class="text-3xl font-bold tracking-tight text-white/90 drop-shadow">Chamada — Aluno</h1>
+      <h1 class="text-3xl font-bold tracking-tight text-white/90 drop-shadow">#Fila — Aluno</h1>
     </header>
 
     <main class="glass rounded-3xl shadow-2xl p-6 md:p-8">
       <p class="mb-4 text-sm text-white/80">
-        Digite seu nome completo. <b>1 envio por dispositivo por dia</b>. Se errar, o professor pode excluir para você reenviar.
+        Entre na <b>#fila do banheiro</b>. Você pode entrar de novo após <b>50 minutos</b>.
+        Se precisar, você pode <b>sair da fila</b>.
       </p>
 
       <form id="form" class="space-y-3">
         <input id="name" placeholder="Seu nome completo" class="w-full px-4 py-3 rounded-2xl border border-white/10 bg-white/80 text-gray-900 focus:outline-none" maxlength="80" required />
-        
         <label class="flex items-center space-x-2 text-white/80 text-sm">
           <input type="checkbox" id="remember" checked class="w-4 h-4">
           <span>Lembrar meu nome neste dispositivo</span>
         </label>
-        
-        <button class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] transition text-white font-semibold shadow-lg shadow-indigo-600/20">
-          Confirmar presença
+        <button id="joinBtn" class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] transition text-white font-semibold shadow-lg shadow-indigo-600/20">
+          Entrar na #fila
         </button>
       </form>
 
       <div id="status" class="mt-4 text-sm text-white/80"></div>
-      <div class="mt-6 text-xs text-white/70">Professor? <a class="underline" href="./admin.html">Abrir painel</a></div>
+
+      <div id="actions" class="mt-4 space-y-2" style="display:none;">
+        <button id="leaveBtn" class="w-full py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-semibold">
+          Sair da #fila
+        </button>
+      </div>
+
+      <div class="mt-6 text-xs text-white/70">Quer ver a lista? clique em: <a class="underline" href="./admin.html">Abrir painel</a></div>
     </main>
   </div>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
-    import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, limit } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
+    import {
+      getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs,
+      orderBy, limit, deleteDoc, doc
+    } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyBnvgtO0EQy9GazG0ZQgU-eWTGAsa21bY0",
@@ -75,6 +84,9 @@
     const nameInput = document.getElementById('name');
     const rememberCheck = document.getElementById('remember');
     const statusEl = document.getElementById('status');
+    const actionsEl = document.getElementById('actions');
+    const leaveBtn = document.getElementById('leaveBtn');
+    const joinBtn = document.getElementById('joinBtn');
 
     function todayKey(){
       const d = new Date();
@@ -91,83 +103,168 @@
     }
     const deviceId = getOrCreateDeviceId();
 
-    async function existsToday(){
-      const q1 = query(collection(db,'submissions'),
-        where('day','==', todayKey()),
+    // Preenche nome salvo
+    const nomeSalvo = localStorage.getItem('nomeAluno');
+    if (nomeSalvo) nameInput.value = nomeSalvo;
+
+    // Busca a última entrada deste dispositivo hoje
+    async function getMyLatestToday(){
+      const q1 = query(
+        collection(db,'submissions'),
         where('deviceId','==', deviceId),
+        orderBy('joinedAt','desc'),
         limit(1)
       );
       const snap = await getDocs(q1);
-      return !snap.empty;
+      const docx = snap.docs[0];
+      if (!docx) return null;
+      const data = docx.data();
+      // Confere se é do dia
+      if (data.day !== todayKey()) return null;
+      return { id: docx.id, ...data };
     }
 
-    async function registrarPresenca(nome){
-      const nomeNormalizado = nome.trim().toLowerCase();
+    function minutesSince(ts){
       try{
-        await addDoc(collection(db,'submissions'), {
-          name: nome.trim(),
-          name_normalized: nomeNormalizado,
-          deviceId,
-          day: todayKey(),
-          createdAt: serverTimestamp(),
-          createdBy: 'user'
-        });
-        form.style.display='none';
-        statusEl.textContent = 'Presença confirmada — obrigado!';
-      }catch(err){
-        console.error(err);
-        statusEl.textContent = 'Erro ao enviar. Tente novamente.';
+        const d = ts?.toDate ? ts.toDate() : (ts instanceof Date ? ts : null);
+        if (!d) return 1e9;
+        return Math.floor((Date.now() - d.getTime())/60000);
+      }catch{ return 1e9; }
+    }
+
+    function showInQueue(position){
+      form.style.display='none';
+      actionsEl.style.display='block';
+      if (position != null){
+        statusEl.textContent = `Você está na posição #${position}.`;
+      } else {
+        statusEl.textContent = 'Você está na #fila.';
       }
     }
 
-    // Preenche o nome salvo se existir
-    const nomeSalvo = localStorage.getItem('nomeAluno');
-    if (nomeSalvo) {
-      nameInput.value = nomeSalvo;
+    function showForm(message){
+      form.style.display='block';
+      actionsEl.style.display='none';
+      statusEl.textContent = message || '';
     }
 
-    // Bloqueio inicial se já enviou hoje
-    (async ()=>{
-      if (await existsToday()){
-        form.style.display='none';
-        statusEl.textContent = 'Presença já enviada neste dispositivo hoje.';
-      }
-    })();
+    async function calcMyPosition(myId){
+      // Carrega a fila do dia, ordenada por horário
+      const q2 = query(
+        collection(db,'submissions'),
+        where('day','==', todayKey())
+      );
+      const snap = await getDocs(q2);
+      const rows = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .sort((a,b)=> (a.joinedAt?.seconds||0) - (b.joinedAt?.seconds||0));
+      const idx = rows.findIndex(r => r.id === myId);
+      return idx >= 0 ? (idx+1) : null;
+    }
 
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const nome = nameInput.value.trim();
-      if(!nome){ statusEl.textContent = 'Digite um nome válido.'; return; }
+    async function canJoinAgain(){
+      const latest = await getMyLatestToday();
+      if (!latest) return true;
+      const mins = minutesSince(latest.joinedAt);
+      return mins >= 50; // janela de 50 minutos
+    }
 
-      if (await existsToday()){
-        form.style.display='none';
-        statusEl.textContent = 'Presença já enviada neste dispositivo hoje.';
+    async function joinQueue(name){
+      const nome = name.trim();
+      if (!nome){ statusEl.textContent='Digite um nome válido.'; return; }
+
+      if (rememberCheck.checked) localStorage.setItem('nomeAluno', nome);
+      else localStorage.removeItem('nomeAluno');
+
+      // respeita cooldown de 50 min
+      if (!(await canJoinAgain())){
+        const latest = await getMyLatestToday();
+        const falta = 50 - minutesSince(latest?.joinedAt);
+        statusEl.textContent = `Você entrou recentemente. Aguarde cerca de ${Math.max(falta,1)} min para entrar novamente.`;
         return;
       }
 
-      if (rememberCheck.checked) {
-        localStorage.setItem('nomeAluno', nome);
-      } else {
-        localStorage.removeItem('nomeAluno');
+      try{
+        const docRef = await addDoc(collection(db,'submissions'), {
+          name: nome,
+          name_normalized: nome.toLowerCase(),
+          deviceId,
+          day: todayKey(),
+          joinedAt: serverTimestamp(),
+          addedBy: 'user'
+        });
+        localStorage.setItem('lastJoinId', docRef.id);
+        const pos = await calcMyPosition(docRef.id);
+        showInQueue(pos);
+      }catch(e){
+        console.error(e);
+        statusEl.textContent = 'Erro ao entrar na fila. Tente novamente.';
       }
+    }
 
-      statusEl.textContent = 'Enviando...';
-      registrarPresenca(nome);
+    async function leaveQueue(){
+      // tenta pelo id salvo
+      const savedId = localStorage.getItem('lastJoinId');
+      if (savedId){
+        try{
+          await deleteDoc(doc(db,'submissions', savedId));
+          localStorage.removeItem('lastJoinId');
+          showForm('Você saiu da #fila.');
+          return;
+        }catch(e){
+          // cai para busca por último doc
+        }
+      }
+      // se não tiver id salvo, apaga a última entrada de hoje deste device
+      const latest = await getMyLatestToday();
+      if (!latest){
+        showForm('Você não está na fila.');
+        return;
+      }
+      try{
+        await deleteDoc(doc(db,'submissions', latest.id));
+        if (savedId === latest.id) localStorage.removeItem('lastJoinId');
+        showForm('Você saiu da #fila.');
+      }catch(e){
+        console.error(e);
+        statusEl.textContent = 'Não foi possível sair agora. Tente novamente.';
+      }
+    }
+
+    // Estado inicial
+    (async ()=>{
+      const latest = await getMyLatestToday();
+      if (latest){
+        const pos = await calcMyPosition(latest.id);
+        localStorage.setItem('lastJoinId', latest.id);
+        showInQueue(pos);
+      }else{
+        showForm('');
+      }
+    })();
+
+    // Eventos
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      joinQueue(nameInput.value);
+    });
+    leaveBtn.addEventListener('click', async ()=>{
+      await leaveQueue();
     });
 
-    // Detecta acesso via QR Code
+    // QR Code auto (?auto=1)
     const params = new URLSearchParams(window.location.search);
-    if (params.get("auto") === "1") {
-      if (nomeSalvo) {
-        (async ()=>{
-          if (await existsToday()) {
-            form.style.display='none';
-            statusEl.textContent = 'Presença já confirmada via QR Code. Aproveite a aula!';
-          } else {
-            registrarPresenca(nomeSalvo);
-          }
-        })();
-      }
+    if (params.get('auto') === '1'){
+      (async ()=>{
+        const latest = await getMyLatestToday();
+        if (latest){
+          const pos = await calcMyPosition(latest.id);
+          showInQueue(pos);
+          statusEl.textContent = 'Você já está na #fila (QR Code).';
+        } else if (nomeSalvo){
+          await joinQueue(nomeSalvo);
+        }
+      })();
     }
   </script>
 </body>
