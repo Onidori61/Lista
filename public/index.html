@@ -13,6 +13,237 @@
       body{color:#fff}
       .glass{background: rgba(17,24,39,.55)}
     }
+    
+    /* Contador de pessoas */
+    .counter-display {
+      font-size: 4rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      animation: pulse-glow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes pulse-glow {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.05); filter: brightness(1.2); }
+    }
+    
+    /* Animações melhoradas */
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-up {
+      animation: slideUp 0.5s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .bounce-in {
+      animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.3); }
+      50% { opacity: 1; transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    
+    /* Melhorias nos botões */
+    .btn-enhanced {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-enhanced::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-enhanced:hover::before {
+      left: 100%;
+    }
+    
+    .btn-enhanced:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    
+    .btn-enhanced:active {
+      transform: translateY(0);
+      transition: transform 0.1s;
+    }
+    
+    /* Status indicator melhorado */
+    .status-indicator {
+      padding: 1rem;
+      border-radius: 1rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      animation: slideUp 0.5s ease-out;
+    }
+    
+    /* Seletor de emojis */
+    .emoji-selector {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.5rem;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .emoji-option {
+      font-size: 2rem;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+      border: 2px solid transparent;
+    }
+    
+    .emoji-option:hover {
+      background: rgba(255,255,255,0.15);
+      transform: scale(1.1);
+    }
+    
+    .emoji-option.selected {
+      background: rgba(99,102,241,0.3);
+      border-color: #6366f1;
+      transform: scale(1.1);
+    }
+    
+    .selected-emoji-display {
+      font-size: 3rem;
+      text-align: center;
+      margin: 1rem 0;
+      animation: bounce-in 0.5s ease-out;
+    }
+    
+    /* Indicador de status do banheiro */
+    .bathroom-status {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    .bathroom-status.free {
+      background: rgba(34,197,94,0.2);
+      border-color: #22c55e;
+      color: #bbf7d0;
+    }
+    
+    .bathroom-status.occupied {
+      background: rgba(239,68,68,0.2);
+      border-color: #ef4444;
+      color: #fecaca;
+    }
+    
+    .bathroom-status.cleaning {
+      background: rgba(251,191,36,0.2);
+      border-color: #fbbf24;
+      color: #fef3c7;
+    }
+    
+    .bathroom-status.maintenance {
+      background: rgba(168,85,247,0.2);
+      border-color: #a855f7;
+      color: #e9d5ff;
+    }
+    
+    .bathroom-status-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    
+    .bathroom-status-text {
+      font-weight: 600;
+      font-size: 1.125rem;
+    }
+    
+    .bathroom-status-description {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      margin-top: 0.25rem;
+    }
+    
+    /* Sistema de prioridade */
+    .priority-selector {
+      display: flex;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    
+    .priority-option {
+      flex: 1;
+      padding: 1rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      border: 2px solid transparent;
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-weight: 600;
+    }
+    
+    .priority-option:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .priority-option.selected {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    
+    .priority-option.urgent.selected {
+      background: rgba(239,68,68,0.3);
+      border-color: #ef4444;
+      color: #fecaca;
+    }
+    
+    .priority-option.normal.selected {
+      background: rgba(34,197,94,0.3);
+      border-color: #22c55e;
+      color: #bbf7d0;
+    }
+    
+    .priority-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
   </style>
   <script>
     tailwind.config = {
@@ -32,32 +263,72 @@
       <h1 class="text-3xl font-bold tracking-tight text-white/90 drop-shadow">#Fila — Aluno</h1>
     </header>
 
-    <main class="glass rounded-3xl shadow-2xl p-6 md:p-8">
+    <main class="glass rounded-3xl shadow-2xl p-6 md:p-8 fade-in">
+      <!-- Status do Banheiro -->
+      <div id="bathroomStatus" class="bathroom-status free">
+        <span class="bathroom-status-icon">✅</span>
+        <div class="bathroom-status-text">Banheiro Livre</div>
+        <div class="bathroom-status-description">Pode usar normalmente</div>
+      </div>
+      
+      <!-- Contador de pessoas na fila -->
+      <div class="text-center mb-6">
+        <div class="counter-display" id="queueCounter">0</div>
+        <p class="text-white/80 text-sm font-medium">pessoas na fila</p>
+      </div>
+      
       <p class="mb-4 text-sm text-white/80">
         Entre na <b>#fila do banheiro</b>. Você pode entrar de novo após <b>50 minutos</b>.
         Se precisar, você pode <b>sair da fila</b>.
       </p>
 
-      <form id="form" class="space-y-3">
-        <input id="name" placeholder="Seu nome completo" class="w-full px-4 py-3 rounded-2xl border border-white/10 bg-white/80 text-gray-900 focus:outline-none" maxlength="80" required />
+      <form id="form" class="space-y-3 slide-up">
+        <input id="name" placeholder="Seu nome completo" class="w-full px-4 py-3 rounded-2xl border border-white/10 bg-white/80 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" maxlength="80" required />
+        
+        <!-- Seletor de emoji -->
+        <div class="emoji-section">
+          <label class="block text-white/80 text-sm font-medium mb-2">Escolha seu avatar:</label>
+          <div id="selectedEmojiDisplay" class="selected-emoji-display">😊</div>
+          <div class="emoji-selector" id="emojiSelector">
+            <!-- Emojis serão inseridos via JavaScript -->
+          </div>
+        </div>
+        
+        <!-- Seletor de prioridade -->
+        <div class="priority-section">
+          <label class="block text-white/80 text-sm font-medium mb-2">Sua necessidade:</label>
+          <div class="priority-selector">
+            <div class="priority-option urgent" data-priority="urgent">
+              <span class="priority-icon">🚨</span>
+              <div>Urgente</div>
+              <div class="text-xs opacity-75 mt-1">Preciso muito</div>
+            </div>
+            <div class="priority-option normal selected" data-priority="normal">
+              <span class="priority-icon">⏰</span>
+              <div>Posso Esperar</div>
+              <div class="text-xs opacity-75 mt-1">Não é urgente</div>
+            </div>
+          </div>
+        </div>
+        
         <label class="flex items-center space-x-2 text-white/80 text-sm">
           <input type="checkbox" id="remember" checked class="w-4 h-4">
           <span>Lembrar meu nome neste dispositivo</span>
         </label>
-        <button id="joinBtn" class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] transition text-white font-semibold shadow-lg shadow-indigo-600/20">
+        <button id="joinBtn" class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] transition text-white font-semibold shadow-lg shadow-indigo-600/20 btn-enhanced">
           Entrar na #fila
         </button>
       </form>
 
       <div id="status" class="mt-4 text-sm text-white/80"></div>
 
-      <div id="actions" class="mt-4 space-y-2" style="display:none;">
-        <button id="leaveBtn" class="w-full py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-semibold">
+      <div id="actions" class="mt-4 space-y-2 bounce-in" style="display:none;">
+        <button id="leaveBtn" class="w-full py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-semibold btn-enhanced">
           Sair da #fila
         </button>
       </div>
 
-      <div class="mt-6 text-xs text-white/70">Quer ver a lista? clique em: <a class="underline" href="./admin.html">Abrir painel</a></div>
+      <div class="mt-6 text-xs text-white/70">Quer ver a lista? clique em: <a class="underline hover:text-white transition-colors" href="./admin.html">Abrir painel</a></div>
     </main>
   </div>
 
@@ -87,6 +358,167 @@
     const actionsEl = document.getElementById('actions');
     const leaveBtn = document.getElementById('leaveBtn');
     const joinBtn = document.getElementById('joinBtn');
+    const queueCounterEl = document.getElementById('queueCounter');
+    const emojiSelectorEl = document.getElementById('emojiSelector');
+    const selectedEmojiDisplayEl = document.getElementById('selectedEmojiDisplay');
+    const bathroomStatusEl = document.getElementById('bathroomStatus');
+
+    // Biblioteca de emojis pré-definida
+    const availableEmojis = [
+      '😊', '😎', '🤓', '😐', '😃', '😁', '😆', '🤐',
+      '🙄', '🤡', '😇', '🥰', '😍', '🤩', '😋', '😜',
+      '😴', '👽', '🤭', '🤫', '🙋‍♂️', '🙋‍♀️', '😌', '🛰️',
+      '👾', '🤠', '👺', '👻', '☠️', '🤖', '👀', '💥'
+    ];
+
+    let selectedEmoji = '😊'; // emoji padrão
+    let selectedPriority = 'normal'; // prioridade padrão
+
+    // Configuração de status do banheiro
+    const bathroomStatusConfig = {
+      free: {
+        icon: '✅',
+        text: 'Banheiro Livre',
+        description: 'Pode usar normalmente'
+      },
+      occupied: {
+        icon: '🚫',
+        text: 'Banheiro bloqueado',
+        description: 'Aguarde sua vez na fila'
+      },
+      cleaning: {
+        icon: '🧽',
+        text: 'Em Limpeza',
+        description: 'Aguarde a limpeza terminar'
+      },
+      maintenance: {
+        icon: '🔧',
+        text: 'Em Manutenção',
+        description: 'Banheiro temporariamente indisponível'
+      }
+    };
+
+    // Função para atualizar indicador de status do banheiro
+    function updateBathroomStatusDisplay(status) {
+      const config = bathroomStatusConfig[status] || bathroomStatusConfig.free;
+      
+      bathroomStatusEl.className = `bathroom-status ${status}`;
+      bathroomStatusEl.innerHTML = `
+        <span class="bathroom-status-icon">${config.icon}</span>
+        <div class="bathroom-status-text">${config.text}</div>
+        <div class="bathroom-status-description">${config.description}</div>
+      `;
+    }
+
+    // Função para monitorar status do banheiro em tempo real
+    async function monitorBathroomStatus() {
+      try {
+        const { onSnapshot, doc: docRef } = await import('https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js');
+        
+        onSnapshot(docRef(db, 'system_status', 'bathroom'), (doc) => {
+          if (doc.exists()) {
+            const data = doc.data();
+            updateBathroomStatusDisplay(data.status || 'free');
+          } else {
+            updateBathroomStatusDisplay('free');
+          }
+        });
+      } catch (e) {
+        console.error('Erro ao monitorar status:', e);
+        updateBathroomStatusDisplay('free');
+      }
+    }
+
+    // Inicializar monitoramento do status
+    monitorBathroomStatus();
+
+    // Função para criar o seletor de emojis
+    function createEmojiSelector() {
+      emojiSelectorEl.innerHTML = availableEmojis.map(emoji => 
+        `<div class="emoji-option" data-emoji="${emoji}">${emoji}</div>`
+      ).join('');
+
+      // Adicionar eventos de clique
+      document.querySelectorAll('.emoji-option').forEach(option => {
+        option.addEventListener('click', () => {
+          // Remover seleção anterior
+          document.querySelectorAll('.emoji-option').forEach(opt => opt.classList.remove('selected'));
+          
+          // Selecionar novo emoji
+          option.classList.add('selected');
+          selectedEmoji = option.dataset.emoji;
+          selectedEmojiDisplayEl.textContent = selectedEmoji;
+          
+          // Salvar emoji selecionado
+          if (rememberCheck.checked) {
+            localStorage.setItem('selectedEmoji', selectedEmoji);
+          }
+        });
+      });
+
+      // Definir emoji padrão como selecionado
+      const savedEmoji = localStorage.getItem('selectedEmoji');
+      if (savedEmoji && availableEmojis.includes(savedEmoji)) {
+        selectedEmoji = savedEmoji;
+        selectedEmojiDisplayEl.textContent = selectedEmoji;
+        document.querySelector(`[data-emoji="${savedEmoji}"]`)?.classList.add('selected');
+      } else {
+        document.querySelector(`[data-emoji="${selectedEmoji}"]`)?.classList.add('selected');
+      }
+    }
+
+    // Função para configurar seletor de prioridade
+    function setupPrioritySelector() {
+      document.querySelectorAll('.priority-option').forEach(option => {
+        option.addEventListener('click', () => {
+          // Remover seleção anterior
+          document.querySelectorAll('.priority-option').forEach(opt => opt.classList.remove('selected'));
+          
+          // Selecionar nova prioridade
+          option.classList.add('selected');
+          selectedPriority = option.dataset.priority;
+          
+          // Salvar prioridade selecionada
+          if (rememberCheck.checked) {
+            localStorage.setItem('selectedPriority', selectedPriority);
+          }
+        });
+      });
+
+      // Definir prioridade salva como selecionada
+      const savedPriority = localStorage.getItem('selectedPriority');
+      if (savedPriority && ['urgent', 'normal'].includes(savedPriority)) {
+        selectedPriority = savedPriority;
+        document.querySelectorAll('.priority-option').forEach(opt => opt.classList.remove('selected'));
+        document.querySelector(`[data-priority="${savedPriority}"]`)?.classList.add('selected');
+      }
+    }
+
+    // Inicializar seletores
+    createEmojiSelector();
+    setupPrioritySelector();
+
+    // Função para atualizar contador de pessoas na fila
+    async function updateQueueCounter() {
+      try {
+        const q = query(collection(db, 'submissions'), where('day', '==', todayKey()));
+        const snap = await getDocs(q);
+        const count = snap.size;
+        queueCounterEl.textContent = count;
+        
+        // Animação do contador quando muda
+        queueCounterEl.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+          queueCounterEl.style.transform = 'scale(1)';
+        }, 200);
+      } catch (e) {
+        console.error('Erro ao atualizar contador:', e);
+      }
+    }
+
+    // Atualizar contador a cada 3 segundos
+    setInterval(updateQueueCounter, 3000);
+    updateQueueCounter(); // Atualização inicial
 
     function todayKey(){
       const d = new Date();
@@ -135,21 +567,30 @@
     function showInQueue(position){
       form.style.display='none';
       actionsEl.style.display='block';
+      actionsEl.classList.add('bounce-in');
+      
       if (position != null){
-        statusEl.textContent = `Você está na posição #${position}.`;
+        statusEl.innerHTML = `<div class="status-indicator">Você está na posição <strong>#${position}</strong>.</div>`;
       } else {
-        statusEl.textContent = 'Você está na #fila.';
+        statusEl.innerHTML = `<div class="status-indicator">Você está na <strong>#fila</strong>.</div>`;
       }
+      
+      // Atualizar contador imediatamente
+      updateQueueCounter();
     }
 
     function showForm(message){
       form.style.display='block';
+      form.classList.add('slide-up');
       actionsEl.style.display='none';
-      statusEl.textContent = message || '';
+      statusEl.innerHTML = message ? `<div class="status-indicator">${message}</div>` : '';
+      
+      // Atualizar contador imediatamente
+      updateQueueCounter();
     }
 
     async function calcMyPosition(myId){
-      // Carrega a fila do dia, ordenada por horário
+      // Carrega a fila do dia, ordenada por prioridade e horário
       const q2 = query(
         collection(db,'submissions'),
         where('day','==', todayKey())
@@ -157,7 +598,15 @@
       const snap = await getDocs(q2);
       const rows = snap.docs
         .map(d => ({ id: d.id, ...d.data() }))
-        .sort((a,b)=> (a.joinedAt?.seconds||0) - (b.joinedAt?.seconds||0));
+        .sort((a,b)=> {
+          // Primeiro ordena por prioridade (urgent primeiro)
+          const priorityA = a.priority === 'urgent' ? 0 : 1;
+          const priorityB = b.priority === 'urgent' ? 0 : 1;
+          if (priorityA !== priorityB) return priorityA - priorityB;
+          
+          // Depois ordena por horário dentro da mesma prioridade
+          return (a.joinedAt?.seconds||0) - (b.joinedAt?.seconds||0);
+        });
       const idx = rows.findIndex(r => r.id === myId);
       return idx >= 0 ? (idx+1) : null;
     }
@@ -171,16 +620,23 @@
 
     async function joinQueue(name){
       const nome = name.trim();
-      if (!nome){ statusEl.textContent='Digite um nome válido.'; return; }
+      if (!nome){ statusEl.innerHTML='<div class="status-indicator">Digite um nome válido.</div>'; return; }
 
-      if (rememberCheck.checked) localStorage.setItem('nomeAluno', nome);
-      else localStorage.removeItem('nomeAluno');
+      if (rememberCheck.checked) {
+        localStorage.setItem('nomeAluno', nome);
+        localStorage.setItem('selectedEmoji', selectedEmoji);
+        localStorage.setItem('selectedPriority', selectedPriority);
+      } else {
+        localStorage.removeItem('nomeAluno');
+        localStorage.removeItem('selectedEmoji');
+        localStorage.removeItem('selectedPriority');
+      }
 
       // respeita cooldown de 50 min
       if (!(await canJoinAgain())){
         const latest = await getMyLatestToday();
         const falta = 50 - minutesSince(latest?.joinedAt);
-        statusEl.textContent = `Você entrou recentemente. Aguarde cerca de ${Math.max(falta,1)} min para entrar novamente.`;
+        statusEl.innerHTML = `<div class="status-indicator">Você entrou recentemente. Aguarde cerca de ${Math.max(falta,1)} min para entrar novamente.</div>`;
         return;
       }
 
@@ -188,6 +644,8 @@
         const docRef = await addDoc(collection(db,'submissions'), {
           name: nome,
           name_normalized: nome.toLowerCase(),
+          emoji: selectedEmoji,
+          priority: selectedPriority,
           deviceId,
           day: todayKey(),
           joinedAt: serverTimestamp(),
@@ -198,7 +656,7 @@
         showInQueue(pos);
       }catch(e){
         console.error(e);
-        statusEl.textContent = 'Erro ao entrar na fila. Tente novamente.';
+        statusEl.innerHTML = '<div class="status-indicator">Erro ao entrar na fila. Tente novamente.</div>';
       }
     }
 

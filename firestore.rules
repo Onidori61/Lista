@@ -5,5 +5,10 @@ service cloud.firestore {
       allow read: if true;   // painel vê em tempo real
       allow write: if true;  // aluno/prof escreve via front
     }
+    
+    // Adicionando regras para a coleção system_status
+    match /system_status/{document=**} {
+      allow read, write: if request.auth != null; // Permite leitura e escrita para usuários autenticados
+    }
   }
 }

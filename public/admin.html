@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>#Fila — Professor</title>
+  <title>#Fila — Painel</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     html{font-family:Poppins,system-ui,Roboto,sans-serif}
@@ -13,24 +14,217 @@
       body{color:#fff}
       .glass{background: rgba(17,24,39,.55)}
     }
-      .posicao {
+    
+    .posicao {
      font-weight: 700;
      color: white;
      -webkit-text-stroke: 1px black; /* contorno preto */
       margin-right: 0.4rem;
-}
+    }
 
-   .tag-professor {
-  background-color: #7c3aed; /* Roxo destaque */
-  color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  margin-left: 0.5rem;
-  display: inline-block;
-}
-
+    .tag-professor {
+      background-color: #7c3aed; /* Roxo destaque */
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+      display: inline-block;
+    }
     
+    /* Contador de pessoas */
+    .counter-display {
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      animation: pulse-glow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes pulse-glow {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.05); filter: brightness(1.2); }
+    }
+    
+    /* Animações melhoradas */
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-up {
+      animation: slideUp 0.5s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Animação para itens da lista */
+    .queue-item {
+      animation: slideUp 0.3s ease-out;
+      transition: all 0.3s ease;
+    }
+    
+    .queue-item:hover {
+      background: rgba(255,255,255,0.05);
+      transform: translateX(5px);
+    }
+    
+    /* Melhorias nos botões */
+    .btn-enhanced {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-enhanced::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-enhanced:hover::before {
+      left: 100%;
+    }
+    
+    .btn-enhanced:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    
+    /* Emoji na lista */
+    .student-emoji {
+      font-size: 1.5rem;
+      margin-right: 0.5rem;
+      display: inline-block;
+    }
+    
+    /* Indicadores de prioridade */
+    .priority-badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.5rem;
+      margin-left: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .priority-urgent {
+      background-color: rgba(239,68,68,0.3);
+      color: #fecaca;
+      border: 1px solid #ef4444;
+    }
+    
+    .priority-normal {
+      background-color: rgba(34,197,94,0.3);
+      color: #bbf7d0;
+      border: 1px solid #22c55e;
+    }
+    
+    /* Drag and drop */
+    .sortable-ghost {
+      opacity: 0.4;
+      background: rgba(99,102,241,0.2) !important;
+    }
+    
+    .sortable-chosen {
+      cursor: grabbing !important;
+    }
+    
+    .drag-handle {
+      cursor: grab;
+      color: rgba(255,255,255,0.5);
+      margin-right: 0.5rem;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+    
+    .drag-handle:hover {
+      color: rgba(255,255,255,0.8);
+    }
+    
+    .queue-item.draggable {
+      cursor: grab;
+    }
+    
+    .queue-item.draggable:active {
+      cursor: grabbing;
+    }
+    
+    /* Status do banheiro */
+    .bathroom-status-selector {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    
+    .status-option {
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      border: 2px solid transparent;
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .status-option:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-1px);
+    }
+    
+    .status-option.selected {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    
+    .status-option.free.selected {
+      background: rgba(34,197,94,0.3);
+      border-color: #22c55e;
+      color: #bbf7d0;
+    }
+    
+    .status-option.occupied.selected {
+      background: rgba(239,68,68,0.3);
+      border-color: #ef4444;
+      color: #fecaca;
+    }
+    
+    .status-option.cleaning.selected {
+      background: rgba(251,191,36,0.3);
+      border-color: #fbbf24;
+      color: #fef3c7;
+    }
+    
+    .status-option.maintenance.selected {
+      background: rgba(168,85,247,0.3);
+      border-color: #a855f7;
+      color: #e9d5ff;
+    }
+    
+    .status-icon {
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
   </style>
   <script>
     tailwind.config = {
@@ -47,14 +241,20 @@
 <body class="min-h-screen bg-futuro">
   <div class="max-w-5xl mx-auto p-6">
     <header class="flex items-center justify-between mb-6">
-      <h1 class="text-3xl font-bold tracking-tight text-white/90 drop-shadow">#Fila — Professor</h1>
+      <h1 class="text-3xl font-bold tracking-tight text-white/90 drop-shadow">#Fila — Painel</h1>
       <div class="flex items-center gap-2">
         <input id="search" placeholder="Filtrar..." class="px-3 py-2 rounded-2xl border border-white/10 bg-white/80 text-gray-900" />
         <button id="adminBtn" class="px-3 py-2 rounded-2xl bg-white/20 text-white hover:bg-white/30">Entrar (admin)</button>
       </div>
     </header>
 
-    <main class="glass rounded-3xl shadow-2xl p-6 md:p-8">
+    <main class="glass rounded-3xl shadow-2xl p-6 md:p-8 fade-in">
+      <!-- Contador de pessoas na fila -->
+      <div class="text-center mb-6">
+        <div class="counter-display" id="queueCounter">0</div>
+        <p class="text-white/80 text-sm font-medium">pessoas na fila</p>
+      </div>
+      
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-semibold text-white/90">Fila (<span id="day"></span>)</h2>
         <div id="count" class="text-sm text-white/80">0 na fila</div>
@@ -62,16 +262,44 @@
 
       <ul id="list" class="divide-y divide-white/10"></ul>
 
-      <section id="adminControls" class="mt-6 hidden">
+      <section id="adminControls" class="mt-6 hidden slide-up">
         <hr class="my-4 border-white/20"/>
+        
+        
+        
         <h3 class="font-semibold mb-3 text-white/90">Controles do professor</h3>
         <div class="flex flex-col md:flex-row gap-2 mb-3">
-          <input id="manualName" placeholder="Nome do aluno (sem celular)" class="flex-1 px-3 py-2 rounded-2xl border border-white/10 bg-white/80 text-gray-900" />
-          <button id="addManual" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white">Adicionar</button>
-          <button id="resetToday" class="px-4 py-2 rounded-2xl bg-red-600 hover:bg-red-700 text-white">Resetar Hoje</button>
+          <input id="manualName" placeholder="Nome do aluno (sem celular)" class="flex-1 px-3 py-2 rounded-2xl border border-white/10 bg-white/80 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" />
+          <button id="addManual" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white btn-enhanced">Adicionar</button>
+          <button id="resetToday" class="px-4 py-2 rounded-2xl bg-red-600 hover:bg-red-700 text-white btn-enhanced">Resetar Hoje</button>
         </div>
-        <p class="text-xs text-white/70">Excluir tira o aluno da fila. Entradas adicionadas manualmente exibem a TAG “(professor)”.</p>
+        <p class="text-xs text-white/70">Excluir tira o aluno da fila. Entradas adicionadas manualmente exibem a TAG "(professor)".</p>
       </section>
+
+<!-- Status do Banheiro -->
+       
+        <div class="mb-6">
+          <h3 class="font-semibold mb-3 text-white/90">Status do Banheiro</h3>
+          <div class="bathroom-status-selector">
+            <div class="status-option free selected" data-status="free">
+              <span class="status-icon">✅</span>
+              <div>Livre</div>
+            </div>
+            <div class="status-option occupied" data-status="occupied">
+              <span class="status-icon">🚫</span>
+              <div>Fora do horário</div>
+            </div>
+            <div class="status-option cleaning" data-status="cleaning">
+              <span class="status-icon">🧽</span>
+              <div>Em Limpeza</div>
+            </div>
+            <div class="status-option maintenance" data-status="maintenance">
+              <span class="status-icon">🔧</span>
+              <div>Manutenção</div>
+            </div>
+          </div>
+        </div>
+
     </main>
   </div>
 
@@ -131,15 +359,95 @@
     const searchEl = document.getElementById('search');
     const manualName = document.getElementById('manualName');
     const resetTodayBtn = document.getElementById('resetToday');
+    const queueCounterEl = document.getElementById('queueCounter');
+    
+    let sortableInstance = null;
+    let currentBathroomStatus = 'free'; // status padrão
 
     dayEl.textContent = todayKey();
+
+    // Função para atualizar contador de pessoas na fila
+    function updateQueueCounter(count) {
+      queueCounterEl.textContent = count;
+      
+      // Animação do contador quando muda
+      queueCounterEl.style.transform = 'scale(1.1)';
+      setTimeout(() => {
+        queueCounterEl.style.transform = 'scale(1)';
+      }, 200);
+    }
+
+    // Função para configurar seletor de status do banheiro
+    function setupBathroomStatusSelector() {
+      document.querySelectorAll('.status-option').forEach(option => {
+        option.addEventListener('click', async () => {
+          if (!adminOn) return;
+          
+          // Remover seleção anterior
+          document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('selected'));
+          
+          // Selecionar novo status
+          option.classList.add('selected');
+          const newStatus = option.dataset.status;
+          
+          try {
+            await updateBathroomStatus(newStatus);
+            currentBathroomStatus = newStatus;
+          } catch (e) {
+            console.error('Erro ao atualizar status:', e);
+            alert('Erro ao atualizar status do banheiro.');
+          }
+        });
+      });
+    }
+
+    // Função para atualizar status do banheiro no Firestore
+    async function updateBathroomStatus(status) {
+      const { setDoc, doc: docRef } = await import('https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js');
+      await setDoc(docRef(db, 'system_status', 'bathroom'), {
+        status: status,
+        updatedAt: serverTimestamp(),
+        updatedBy: 'admin'
+      });
+    }
+
+    // Função para carregar status atual do banheiro
+    async function loadBathroomStatus() {
+      try {
+        const { getDoc, doc: docRef } = await import('https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js');
+        const docSnap = await getDoc(docRef(db, 'system_status', 'bathroom'));
+        
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          currentBathroomStatus = data.status || 'free';
+          
+          // Atualizar interface
+          document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('selected'));
+          document.querySelector(`[data-status="${currentBathroomStatus}"]`)?.classList.add('selected');
+        }
+      } catch (e) {
+        console.error('Erro ao carregar status:', e);
+      }
+    }
+
+    // Inicializar seletor de status
+    setupBathroomStatusSelector();
+    loadBathroomStatus();
 
     // Dados em tempo real do dia
     let rows = [];
     const qToday = query(collection(db,'submissions'), where('day','==', todayKey()));
     onSnapshot(qToday, snap=>{
       rows = snap.docs.map(d=>({ id:d.id, ...d.data() }))
-              .sort((a,b)=> (a.joinedAt?.seconds||0) - (b.joinedAt?.seconds||0));
+              .sort((a,b)=> {
+                // Primeiro ordena por prioridade (urgent primeiro)
+                const priorityA = a.priority === 'urgent' ? 0 : 1;
+                const priorityB = b.priority === 'urgent' ? 0 : 1;
+                if (priorityA !== priorityB) return priorityA - priorityB;
+                
+                // Depois ordena por horário dentro da mesma prioridade
+                return (a.joinedAt?.seconds||0) - (b.joinedAt?.seconds||0);
+              });
       render();
     });
 
@@ -149,25 +457,42 @@
       const f = (searchEl.value||'').toLowerCase();
       const filtered = rows.filter(r => (r.name||'').toLowerCase().includes(f));
       countEl.textContent = `${filtered.length} na fila`;
+      updateQueueCounter(filtered.length);
+      
       listEl.innerHTML = filtered.map((r, i) => {
         const tag = r.addedBy === 'professor'
          ? '<span class="tag-professor">Professor</span>'
          : '';
+        
+        const emoji = r.emoji || '😊'; // emoji padrão se não tiver
+        const priority = r.priority || 'normal'; // prioridade padrão
+        const priorityBadge = priority === 'urgent' 
+          ? '<span class="priority-badge priority-urgent">🚨 Urgente</span>'
+          : '<span class="priority-badge priority-normal">⏰ Pode Esperar</span>';
+
+        const dragHandle = adminOn ? '<span class="drag-handle">⋮⋮</span>' : '';
 
         return `
-          <li class="py-3 flex items-center justify-between">
-            <div class="min-w-0">
-              <div class="font-semibold truncate max-w-[60vw] md:max-w-[40vw]">
-              <span class="posicao">#${i+1}</span> ${(r.name||'').replace(/</g,'&lt;')}${tag}
+          <li class="py-3 flex items-center justify-between queue-item ${adminOn ? 'draggable' : ''}" data-id="${r.id}">
+            <div class="min-w-0 flex items-center">
+              ${dragHandle}
+              <span class="student-emoji">${emoji}</span>
+              <div>
+                <div class="font-semibold truncate max-w-[40vw] md:max-w-[20vw]">
+                  <span class="posicao">#${i+1}</span> ${(r.name||'').replace(/</g,'&lt;')}${tag}${priorityBadge}
+                </div>
+                <div class="text-xs text-white/70">${formatTime(r.joinedAt)}</div>
               </div>
-
-              <div class="text-xs text-white/70">${formatTime(r.joinedAt)}</div>
             </div>
-            ${adminOn ? `<button data-id="${r.id}" class="del px-3 py-1 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-xs">Excluir</button>` : ''}
+            ${adminOn ? `<button data-id="${r.id}" class="del px-3 py-1 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-xs btn-enhanced">Excluir</button>` : ''}
           </li>`;
       }).join('');
 
       if (adminOn){
+        // Configurar drag and drop
+        setupSortable();
+        
+        // Configurar botões de excluir
         document.querySelectorAll('.del').forEach(btn=>{
           btn.onclick = async ()=>{
             const id = btn.getAttribute('data-id');
@@ -175,10 +500,76 @@
             try{ await deleteDoc(doc(db,'submissions',id)); } catch(e){ alert('Erro ao excluir.'); }
           };
         });
+      } else {
+        // Destruir sortable se não for admin
+        if (sortableInstance) {
+          sortableInstance.destroy();
+          sortableInstance = null;
+        }
       }
     }
 
-    // Adicionar manual (entra com TAG “professor”)
+    // Função para configurar drag and drop
+    function setupSortable() {
+      if (sortableInstance) {
+        sortableInstance.destroy();
+      }
+      
+      sortableInstance = Sortable.create(listEl, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        handle: '.drag-handle',
+        onEnd: async function (evt) {
+          const itemId = evt.item.dataset.id;
+          const newIndex = evt.newIndex;
+          
+          try {
+            await updateQueueOrder(itemId, newIndex);
+          } catch (e) {
+            console.error('Erro ao reordenar:', e);
+            alert('Erro ao reordenar a fila. Tente novamente.');
+            // Recarregar para restaurar ordem original
+            location.reload();
+          }
+        }
+      });
+    }
+
+    // Função para atualizar ordem da fila no Firestore
+    async function updateQueueOrder(movedItemId, newIndex) {
+      // Encontrar o item movido
+      const movedItem = rows.find(r => r.id === movedItemId);
+      if (!movedItem) return;
+
+      // Criar nova ordem baseada na posição visual
+      const newOrder = [...rows];
+      const oldIndex = newOrder.findIndex(r => r.id === movedItemId);
+      
+      // Remover item da posição antiga e inserir na nova
+      newOrder.splice(oldIndex, 1);
+      newOrder.splice(newIndex, 0, movedItem);
+
+      // Atualizar timestamps para refletir a nova ordem
+      const baseTime = Date.now();
+      
+      for (let i = 0; i < newOrder.length; i++) {
+        const item = newOrder[i];
+        const newTimestamp = new Date(baseTime + i * 1000); // 1 segundo de diferença entre cada item
+        
+        // Usar updateDoc para atualizar o timestamp
+        try {
+          const { updateDoc, doc: docRef } = await import('https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js');
+          await updateDoc(docRef(db, 'submissions', item.id), {
+            joinedAt: newTimestamp
+          });
+        } catch (e) {
+          console.error('Erro ao atualizar item:', item.id, e);
+        }
+      }
+    }
+
+    // Adicionar manual (entra com TAG "professor")
     document.getElementById('addManual').onclick = async () => {
       if (!adminOn) return alert('Entre no modo admin.');
       const name = manualName.value.trim();
@@ -187,6 +578,8 @@
         await addDoc(collection(db,'submissions'), {
           name,
           name_normalized: name.toLowerCase(),
+          emoji: '👨‍🏫', // emoji padrão para professor
+          priority: 'normal', // prioridade padrão
           deviceId: 'manual',
           day: todayKey(),
           joinedAt: serverTimestamp(),
@@ -206,7 +599,50 @@
         await Promise.all(ops);
         alert('Fila de hoje resetada.');
       }catch(e){ alert('Erro ao resetar.'); }
-    };
+    }; // resetTodayBtn.onclick
+
+    // impedir devtools (F12, Ctrl+Shift+I, Ctrl+U)
+
+    if (!adminOn) {
+  // Bloquear teclas de DevTools e Ctrl+U silenciosamente
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && ["I","C","J"].includes(e.key)) ||
+      (e.ctrlKey && e.key === "U")
+    ) e.preventDefault();
+  });
+
+  // Bloquear clique direito
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Detecção de DevTools simples e "congelamento"
+  let devtoolsOpen = false;
+  const checkDevTools = () => {
+    const threshold = 160; // pixels
+    if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+      if (!devtoolsOpen) {
+        devtoolsOpen = true;
+        document.body.style.pointerEvents = 'none';
+        document.body.style.userSelect = 'none';
+        document.body.style.opacity = '0.5';
+      }
+    } else {
+      if (devtoolsOpen) {
+        devtoolsOpen = false;
+        document.body.style.pointerEvents = '';
+        document.body.style.userSelect = '';
+        document.body.style.opacity = '1';
+      }
+    }
+  };
+  setInterval(checkDevTools, 500);
+}
+
+    
   </script>
+
+
+
 </body>
 </html>
